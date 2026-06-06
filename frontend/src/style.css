@@ -251,6 +251,13 @@ del {
   color: var(--text-color);
 }
 
+.empty-state-logo {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 1.5rem;
+  opacity: 0.85;
+}
+
 #settings-btn {
   position: fixed;
   bottom: 1.5rem;
