@@ -295,7 +295,7 @@ del {
   position: fixed;
   bottom: 4.5rem;
   right: 1.5rem;
-  width: 240px;
+  width: 290px;
   background-color: var(--bg-color);
   border: 1px solid var(--border-color);
   border-radius: 8px;
@@ -332,6 +332,7 @@ del {
 .settings-row {
   display: flex;
   align-items: center;
+
   gap: 0.5rem;
 }
 
