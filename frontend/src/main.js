@@ -1,4 +1,4 @@
-import { GetRenderedMarkdown, CloseApp, OpenInBrowser } from '../wailsjs/go/main/App.js';
+import { GetRenderedMarkdown, CloseApp, OpenInBrowser, OpenLocalMarkdown } from '../wailsjs/go/main/App.js';
 
 const THEMES = ['', 'theme-dark', 'theme-sepia'];
 const ZOOM_MIN = 80;
@@ -90,13 +90,33 @@ function restoreZoom() {
   }
 }
 
+function isMarkdownLink(href) {
+  if (!href) return false;
+  if (href.startsWith('#') || href.startsWith('http://') || href.startsWith('https://')) return false;
+  if (href.startsWith('mailto:') || href.startsWith('tel:')) return false;
+  const pathPart = href.split('#')[0].split('?')[0];
+  return pathPart.toLowerCase().endsWith('.md');
+}
+
 function interceptLinks() {
   document.querySelectorAll('#content a').forEach(link => {
     const href = link.getAttribute('href');
-    if (href && (href.startsWith('http://') || href.startsWith('https://'))) {
+    if (!href) return;
+
+    if (href.startsWith('http://') || href.startsWith('https://')) {
       link.addEventListener('click', (e) => {
         e.preventDefault();
         OpenInBrowser(href);
+      });
+      return;
+    }
+
+    if (isMarkdownLink(href)) {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        OpenLocalMarkdown(href).catch(err => {
+          alert(err);
+        });
       });
     }
   });

@@ -5,7 +5,9 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"github.com/yuin/goldmark"
@@ -53,4 +55,39 @@ func (a *App) CloseApp() {
 
 func (a *App) OpenInBrowser(url string) {
 	runtime.BrowserOpenURL(a.ctx, url)
+}
+
+func (a *App) OpenLocalMarkdown(relPath string) error {
+	relPath = filepath.FromSlash(relPath)
+
+	if idx := strings.Index(relPath, "#"); idx != -1 {
+		relPath = relPath[:idx]
+	}
+
+	resolved := filepath.Join(filepath.Dir(a.filePath), relPath)
+	resolved = filepath.Clean(resolved)
+
+	if filepath.Ext(resolved) != ".md" {
+		return nil
+	}
+
+	info, err := os.Stat(resolved)
+	if err != nil {
+		return fmt.Errorf("File not found: %s", resolved)
+	}
+	if info.IsDir() {
+		return fmt.Errorf("Path is a directory: %s", resolved)
+	}
+
+	exePath, err := os.Executable()
+	if err != nil {
+		return fmt.Errorf("Could not determine executable path: %s", err.Error())
+	}
+
+	cmd := exec.Command(exePath, resolved)
+	if err := cmd.Start(); err != nil {
+		return fmt.Errorf("Failed to open file: %s", err.Error())
+	}
+
+	return nil
 }
