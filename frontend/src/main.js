@@ -139,6 +139,15 @@ window.addEventListener('keydown', (e) => {
     case 'l':
       window.scrollBy({ left: 50, behavior: 'auto' });
       break;
+    case 'q':
+      CloseApp();
+      break;
+    case 'g':
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      break;
+    case 'G':
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      break;
     case 't':
       cycleTheme();
       break;
