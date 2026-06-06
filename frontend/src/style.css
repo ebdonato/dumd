@@ -287,6 +287,10 @@ del {
   background-color: var(--code-bg);
 }
 
+#settings-btn svg {
+  pointer-events: none;
+}
+
 #settings-popover {
   position: fixed;
   bottom: 4.5rem;

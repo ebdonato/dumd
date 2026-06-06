@@ -157,7 +157,7 @@ window.addEventListener('keydown', (e) => {
   }
 });
 
-document.addEventListener('DOMContentLoaded', async () => {
+(async () => {
   restoreTheme();
   restoreZoom();
 
@@ -225,4 +225,4 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   window.addEventListener('scroll', updateProgressBar, { passive: true });
-});
+})();
