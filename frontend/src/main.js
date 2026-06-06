@@ -20,21 +20,21 @@ function updateZoomLabel() {
 
 function updateThemeButtons() {
   document.querySelectorAll('.theme-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.theme === document.body.className);
+    btn.classList.toggle('active', btn.dataset.theme === document.documentElement.className);
   });
 }
 
 function cycleTheme() {
-  const current = document.body.className;
+  const current = document.documentElement.className;
   const idx = THEMES.indexOf(current);
   const next = THEMES[(idx + 1) % THEMES.length];
-  document.body.className = next;
+  document.documentElement.className = next;
   localStorage.setItem('dumd-theme', next);
   updateThemeButtons();
 }
 
 function setTheme(themeName) {
-  document.body.className = themeName;
+  document.documentElement.className = themeName;
   localStorage.setItem('dumd-theme', themeName);
   updateThemeButtons();
 }
@@ -42,7 +42,7 @@ function setTheme(themeName) {
 function restoreTheme() {
   const saved = localStorage.getItem('dumd-theme');
   if (THEMES.includes(saved)) {
-    document.body.className = saved;
+    document.documentElement.className = saved;
   }
   updateThemeButtons();
 }

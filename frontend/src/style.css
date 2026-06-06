@@ -10,7 +10,7 @@
   --table-header-bg: #f6f8fa;
 }
 
-body.theme-dark {
+.theme-dark {
   --bg-color: #0d1117;
   --text-color: #c9d1d9;
   --accent-color: #58a6ff;
@@ -22,7 +22,7 @@ body.theme-dark {
   --table-header-bg: #1c2128;
 }
 
-body.theme-sepia {
+.theme-sepia {
   --bg-color: #f4ecd8;
   --text-color: #433422;
   --accent-color: #7a4d1c;
@@ -222,15 +222,7 @@ del {
 
 ::selection {
   background-color: var(--accent-color);
-  color: #ffffff;
-}
-
-body.theme-dark ::selection {
-  color: #0d1117;
-}
-
-body.theme-sepia ::selection {
-  color: #f4ecd8;
+  color: var(--bg-color);
 }
 
 #content,
