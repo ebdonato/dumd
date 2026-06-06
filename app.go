@@ -9,6 +9,7 @@ import (
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"github.com/yuin/goldmark"
+	"github.com/yuin/goldmark/extension"
 )
 
 type App struct {
@@ -39,7 +40,8 @@ func (a *App) GetRenderedMarkdown() string {
 		return `<div class="empty-state"><p>This file is empty.</p></div>`
 	}
 	var buf bytes.Buffer
-	if err := goldmark.Convert(source, &buf); err != nil {
+	md := goldmark.New(goldmark.WithExtensions(extension.Table))
+	if err := md.Convert(source, &buf); err != nil {
 		return fmt.Sprintf("<p>Error rendering Markdown: %s</p>", err.Error())
 	}
 	return buf.String()
