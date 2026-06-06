@@ -6,6 +6,9 @@
   "frontend:build": "npm run build",
   "frontend:dev:watcher": "npm run dev",
   "frontend:dev:serverUrl": "auto",
+  "width": 900,
+  "height": 700,
+  "frameless": false,
   "author": {
     "name": "Eduardo DONATO",
     "email": "eduardo.donato@gmail.com"
