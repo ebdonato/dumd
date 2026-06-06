@@ -60,7 +60,7 @@ jobs:
         run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
 
       - name: Build
-        run: wails build -clean -ldflags "-s -w"
+        run: wails build -clean -tags webkit2_41 -ldflags "-s -w"
 
       - name: Rename binary
         run: mv build/bin/dumd build/bin/dumd-linux-amd64
