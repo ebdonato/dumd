@@ -167,6 +167,7 @@ window.addEventListener('keydown', (e) => {
     content.innerHTML = html;
     interceptLinks();
     updateProgressBar();
+    window.focus();
   } catch (err) {
     content.innerHTML = `<p>Error loading Markdown: ${err}</p>`;
   }
