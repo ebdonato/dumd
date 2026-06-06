@@ -1,0 +1,167 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.23"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Wails CLI
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+
+      - name: Build
+        run: wails build -clean -ldflags "-s -w"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dumd-windows-amd64
+          path: build/bin/dumd.exe
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.23"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Linux dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev
+
+      - name: Install Wails CLI
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+
+      - name: Build
+        run: wails build -clean -ldflags "-s -w"
+
+      - name: Rename binary
+        run: mv build/bin/dumd build/bin/dumd-linux-amd64
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dumd-linux-amd64
+          path: build/bin/dumd-linux-amd64
+
+  build-macos-arm64:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.23"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Wails CLI
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+
+      - name: Build
+        run: wails build -clean -platform darwin/arm64 -ldflags "-s -w"
+
+      - name: Rename binary
+        run: mv build/bin/dumd.app/Contents/MacOS/dumd build/bin/dumd-darwin-arm64
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dumd-darwin-arm64
+          path: build/bin/dumd-darwin-arm64
+
+  build-macos-amd64:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.23"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Wails CLI
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+
+      - name: Build
+        run: wails build -clean -platform darwin/amd64 -ldflags "-s -w"
+
+      - name: Rename binary
+        run: mv build/bin/dumd.app/Contents/MacOS/dumd build/bin/dumd-darwin-amd64
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dumd-darwin-amd64
+          path: build/bin/dumd-darwin-amd64
+
+  release:
+    needs: [build-windows, build-linux, build-macos-arm64, build-macos-amd64]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Prepare release files
+        run: |
+          mkdir -p release
+          cp artifacts/dumd-windows-amd64/dumd.exe      release/dumd.exe
+          cp artifacts/dumd-linux-amd64/dumd-linux-amd64 release/dumd-linux-amd64
+          cp artifacts/dumd-darwin-arm64/dumd-darwin-arm64 release/dumd-darwin-arm64
+          cp artifacts/dumd-darwin-amd64/dumd-darwin-amd64 release/dumd-darwin-amd64
+
+          chmod +x release/dumd-linux-amd64
+          chmod +x release/dumd-darwin-arm64
+          chmod +x release/dumd-darwin-amd64
+
+          VERSION=${GITHUB_REF_NAME}
+          cd release && zip ../dumd-${VERSION}.zip * && cd ..
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            release/dumd.exe
+            release/dumd-linux-amd64
+            release/dumd-darwin-arm64
+            release/dumd-darwin-amd64
+            dumd-*.zip
