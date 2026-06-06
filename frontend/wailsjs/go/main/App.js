@@ -9,3 +9,7 @@ export function CloseApp() {
 export function GetRenderedMarkdown() {
   return window['go']['main']['App']['GetRenderedMarkdown']();
 }
+
+export function OpenInBrowser(arg1) {
+  return window['go']['main']['App']['OpenInBrowser'](arg1);
+}

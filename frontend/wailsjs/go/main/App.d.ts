@@ -4,3 +4,5 @@
 export function CloseApp():Promise<void>;
 
 export function GetRenderedMarkdown():Promise<string>;
+
+export function OpenInBrowser(arg1:string):Promise<void>;

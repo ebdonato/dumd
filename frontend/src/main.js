@@ -1,4 +1,4 @@
-import { GetRenderedMarkdown, CloseApp } from '../wailsjs/go/main/App.js';
+import { GetRenderedMarkdown, CloseApp, OpenInBrowser } from '../wailsjs/go/main/App.js';
 
 const THEMES = ['', 'theme-dark', 'theme-sepia'];
 const ZOOM_MIN = 80;
@@ -90,6 +90,27 @@ function restoreZoom() {
   }
 }
 
+function interceptLinks() {
+  document.querySelectorAll('#content a').forEach(link => {
+    const href = link.getAttribute('href');
+    if (href && (href.startsWith('http://') || href.startsWith('https://'))) {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        OpenInBrowser(href);
+      });
+    }
+  });
+}
+
+function updateProgressBar() {
+  const bar = document.getElementById('progress-bar');
+  if (!bar) return;
+  const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+  const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+  bar.style.width = progress + '%';
+}
+
 window.addEventListener('keydown', (e) => {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
@@ -144,6 +165,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   try {
     const html = await GetRenderedMarkdown();
     content.innerHTML = html;
+    interceptLinks();
+    updateProgressBar();
   } catch (err) {
     content.innerHTML = `<p>Error loading Markdown: ${err}</p>`;
   }
@@ -200,4 +223,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       }, 1500);
     }
   });
+
+  window.addEventListener('scroll', updateProgressBar, { passive: true });
 });
