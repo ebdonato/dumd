@@ -12,5 +12,12 @@
   "author": {
     "name": "Eduardo DONATO",
     "email": "eduardo.donato@gmail.com"
+  },
+  "info": {
+    "companyName": "Eduardo DONATO",
+    "productName": "DuMD",
+    "productVersion": "1.1.0",
+    "copyright": "Copyright © 2026 Eduardo DONATO. All rights reserved.",
+    "comments": "Ultra-minimalist Markdown Viewer"
   }
 }

@@ -1,15 +1,19 @@
 {
 	"fixed": {
-		"file_version": "{{.Info.ProductVersion}}"
+		"file_version": "{{.Info.ProductVersion}}.0",
+		"product_version": "{{.Info.ProductVersion}}.0"
 	},
 	"info": {
-		"0000": {
-			"ProductVersion": "{{.Info.ProductVersion}}",
+		"0409": {
+			"Comments": "{{.Info.Comments}}",
 			"CompanyName": "{{.Info.CompanyName}}",
-			"FileDescription": "{{.Info.ProductName}}",
+			"FileDescription": "{{.Info.ProductName}} - {{.Info.Comments}}",
+			"FileVersion": "{{.Info.ProductVersion}}.0",
+			"InternalName": "{{.Name}}",
 			"LegalCopyright": "{{.Info.Copyright}}",
+			"OriginalFilename": "{{.OutputFilename}}",
 			"ProductName": "{{.Info.ProductName}}",
-			"Comments": "{{.Info.Comments}}"
+			"ProductVersion": "{{.Info.ProductVersion}}.0"
 		}
 	}
 }
