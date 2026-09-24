@@ -14,6 +14,8 @@
 - Go module name is `github.com/ebdonato/dumd` (required by remote `go install`).
 - `main.go` — entry point, embeds `frontend/dist` via `go:embed`.
 - `app.go` — all business logic (file I/O, Goldmark markdown→HTML, window control). Methods on `App` struct are auto-exposed to JS as Wails bindings.
+- `console_windows.go` (`windows && !dev`) — per-monitor DPI, window icon from embedded `build/windows/icon.ico`, and self-detach so console-subsystem `go install` builds release the terminal.
+- `console_stub.go` (`!windows || dev`) — no-op stubs.
 - `frontend/src/main.js` — all frontend logic (keyboard handling, themes, zoom, IPC calls). Single file, no framework.
 - `frontend/src/style.css` — all CSS including theme variables and typography.
 - `frontend/wailsjs/` — **auto-generated** by Wails. Never edit.

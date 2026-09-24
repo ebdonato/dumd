@@ -90,6 +90,8 @@ To install a specific version, replace `@latest` with a tag (for example `@v1.1.
 
 `go install` does not pass `-ldflags "-s -w"`, so the binary is a few MB larger than a release build. To match the release size, clone the repo and use `wails build` instead.
 
+`go install` builds still get the window icon, per-monitor DPI, and a non-blocking terminal (handled at startup in `console_windows.go`). The `.exe` file icon shown in Explorer is only embedded by `wails build`.
+
 > **Note:** `go install` builds from the committed `frontend/dist/`. Release binaries built by CI always compile the frontend from source. If `frontend/dist/` is stale the [Dist Check](.github/workflows/dist-check.yml) workflow will fail.
 
 ### Build from Source

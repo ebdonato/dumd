@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"embed"
 	"os"
 
@@ -13,6 +14,8 @@ import (
 var assets embed.FS
 
 func main() {
+	prepareWindows()
+
 	filePath := ""
 	if len(os.Args) >= 2 {
 		filePath = os.Args[1]
@@ -29,7 +32,10 @@ func main() {
 			Assets:  assets,
 			Handler: NewLocalFileHandler(app),
 		},
-		OnStartup:        app.startup,
+		OnStartup: func(ctx context.Context) {
+			setWindowIcon()
+			app.startup(ctx)
+		},
 		Bind: []interface{}{
 			app,
 		},
