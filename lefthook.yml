@@ -1,0 +1,8 @@
+# lefthook.yml — Git hooks managed by Lefthook
+# https://github.com/evilmartians/lefthook
+
+pre-commit:
+  commands:
+    resgen:
+      run: go run ./tools/resgen
+      stage_fixed: true
