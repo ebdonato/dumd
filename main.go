@@ -26,7 +26,8 @@ func main() {
 		Width:  900,
 		Height: 700,
 		AssetServer: &assetserver.Options{
-			Assets: assets,
+			Assets:  assets,
+			Handler: NewLocalFileHandler(app),
 		},
 		OnStartup:        app.startup,
 		Bind: []interface{}{
