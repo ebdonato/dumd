@@ -67,6 +67,31 @@ Download the pre-built binary for your platform from the [Releases](https://gith
 | macOS    | Intel        | `dumd-darwin-amd64` |
 | Linux    | x64          | `dumd-linux-amd64`  |
 
+### Install with `go install`
+
+Requires Go >= 1.25. On Linux and macOS a C compiler is needed too (Wails links WebView via cgo); Windows is pure Go.
+
+```bash
+# Recommended - Windows / macOS
+go install -tags production github.com/ebdonato/dumd@latest
+
+# Recommended - Linux (build deps: libgtk-3-dev libwebkit2gtk-4.1-dev)
+go install -tags "production webkit2_41" github.com/ebdonato/dumd@latest
+```
+
+Quick path (no extra flags, ships the verbose debug runtime; Linux still needs the webkit tag):
+
+```bash
+go install github.com/ebdonato/dumd@latest
+go install -tags webkit2_41 github.com/ebdonato/dumd@latest   # Linux
+```
+
+To install a specific version, replace `@latest` with a tag (for example `@v1.1.0`).
+
+`go install` does not pass `-ldflags "-s -w"`, so the binary is a few MB larger than a release build. To match the release size, clone the repo and use `wails build` instead.
+
+> **Note:** `go install` builds from the committed `frontend/dist/`. Release binaries built by CI always compile the frontend from source. If `frontend/dist/` is stale the [Dist Check](.github/workflows/dist-check.yml) workflow will fail.
+
 ### Build from Source
 
 See the [Building](#building) section below.
@@ -258,7 +283,7 @@ This will:
 2. Start the Vite dev server for the frontend
 3. Open the application window with hot-reload enabled
 
-> **Important:** Do **not** use `go build` directly. Wails orchestrates the Go compile, Vite frontend build, and asset embedding.
+> **Important:** Prefer `wails build` / `wails dev`. Wails orchestrates the Go compile, Vite frontend build, and asset embedding. Plain `go build` / `go install` also work because `frontend/dist/` is committed, but they skip production packaging (Windows GUI subsystem, icon/manifest, `-s -w` stripping).
 
 ### Project Structure
 
@@ -313,6 +338,19 @@ The `App` struct in [app.go](app.go) exposes the following methods to the fronte
 ### Versioning
 
 The version of the final build is set in [`wails.json`](wails.json) under the `info.productVersion` field and should match the commit tag of the Git repository.
+
+### Keep `frontend/dist/` in sync
+
+`frontend/dist/` is committed so that `go install` can embed the UI. It is a build output of `frontend/src/` — never edit it by hand. After changing any frontend source:
+
+```bash
+cd frontend
+npm run build
+cd ..
+git add frontend/dist
+```
+
+Commit the refreshed `frontend/dist/` together with your source change. CI's [Dist Check](.github/workflows/dist-check.yml) workflow fails the build if it is stale.
 
 ### Production Build (Current Platform)
 

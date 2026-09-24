@@ -1,4 +1,4 @@
-module dumd
+module github.com/ebdonato/dumd
 
 go 1.25.0
 

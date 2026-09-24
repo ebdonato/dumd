@@ -3,7 +3,6 @@ build/bin
 
 # Frontend dependencies & build artifacts
 node_modules
-frontend/dist
 
 # Wails auto-generated files
 frontend/wailsjs/
