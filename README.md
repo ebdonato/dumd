@@ -246,6 +246,12 @@ Start the development server with live reload:
 wails dev
 ```
 
+To run in development mode opening a specific Markdown file, use:
+
+```bash
+wails dev -appargs path\to\file.md
+```
+
 This will:
 
 1. Build the Go backend
@@ -303,6 +309,10 @@ The `App` struct in [app.go](app.go) exposes the following methods to the fronte
 | [Vite](https://vitejs.dev)                   | Frontend bundler (dev server + production) |
 
 ## Building
+
+### Versioning
+
+The version of the final build is set in [`wails.json`](wails.json) under the `info.productVersion` field and should match the commit tag of the Git repository.
 
 ### Production Build (Current Platform)
 
