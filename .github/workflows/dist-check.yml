@@ -39,5 +39,13 @@ jobs:
             exit 1
           fi
 
+      - name: Verify dumd-res.syso is up to date
+        run: |
+          go run ./tools/resgen
+          if [ -n "$(git status --porcelain -- dumd-res.syso)" ]; then
+            echo "::error::dumd-res.syso is missing or stale. Run 'go run ./tools/resgen' and commit the result."
+            exit 1
+          fi
+
       - name: Verify go install compile path
         run: go build -tags "production webkit2_41" -o "$RUNNER_TEMP/dumd" .
