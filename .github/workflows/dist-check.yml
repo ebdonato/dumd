@@ -39,13 +39,51 @@ jobs:
             exit 1
           fi
 
-      - name: Verify dumd-res.syso is up to date
+      - name: Verify internal/winres is up to date
         run: |
           go run ./tools/resgen
-          if [ -n "$(git status --porcelain -- dumd-res.syso)" ]; then
-            echo "::error::dumd-res.syso is missing or stale. Run 'go run ./tools/resgen' and commit the result."
+          if [ -n "$(git status --porcelain -- internal/winres)" ]; then
+            echo "::error::internal/winres is missing or stale. Run 'go run ./tools/resgen' and commit the result."
             exit 1
           fi
 
       - name: Verify go install compile path
         run: go build -tags "production webkit2_41" -o "$RUNNER_TEMP/dumd" .
+
+  check-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Verify internal/winres is up to date
+        run: |
+          go run ./tools/resgen
+          if (git status --porcelain -- internal/winres) {
+            Write-Error "internal/winres is missing or stale. Run 'go run ./tools/resgen' and commit the result."
+            exit 1
+          }
+
+      - name: Verify go install compile path embeds resources
+        run: |
+          go build -tags production -o dumd.exe .
+          $info = (Get-Item dumd.exe).VersionInfo
+          if ($info.ProductName -ne "DuMD") {
+            Write-Error "go install binary is missing embedded resources (ProductName was '$($info.ProductName)')."
+            exit 1
+          }
+
+      - name: Install Wails CLI
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+
+      - name: Verify wails build still links (regression guard for dual .syso)
+        run: wails build -clean -ldflags "-s -w"

@@ -33,7 +33,6 @@ func main() {
 			Handler: NewLocalFileHandler(app),
 		},
 		OnStartup: func(ctx context.Context) {
-			setWindowIcon()
 			app.startup(ctx)
 		},
 		Bind: []interface{}{

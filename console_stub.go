@@ -3,5 +3,3 @@
 package main
 
 func prepareWindows() {}
-
-func setWindowIcon() {}

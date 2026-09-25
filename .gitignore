@@ -8,6 +8,11 @@ node_modules
 frontend/wailsjs/
 frontend/package.json.md5
 
+# Wails' own ephemeral Windows resource object (wails dev / wails build write
+# and delete this at the repo root). The committed equivalent lives in
+# internal/winres/ — see resources_windows.go.
+/dumd-res.syso
+
 # Go binaries & test artifacts
 *.exe
 *.exe~

@@ -4,5 +4,5 @@
 pre-commit:
   commands:
     resgen:
-      run: go run ./tools/resgen
-      stage_fixed: true
+      glob: "{wails.json,build/windows/icon.ico,build/windows/info.json,build/windows/wails.exe.manifest}"
+      run: go run ./tools/resgen && git add internal/winres

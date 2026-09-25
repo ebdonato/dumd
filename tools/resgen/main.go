@@ -1,23 +1,25 @@
-// Command resgen compiles a committed Windows resource (.syso) for the DuMD
-// binary so that `go install github.com/ebdonato/dumd@latest` embeds the icon,
-// the application manifest and the version info — the same resources `wails
-// build` injects through its temporary `<name>-res.syso`.
+// Command resgen compiles the committed Windows resource objects (.syso) for
+// the DuMD binary so that `go install github.com/ebdonato/dumd@latest` embeds
+// the icon, the application manifest and the version info — the same
+// resources `wails build` injects through its own ephemeral
+// `<name>-res.syso`.
 //
 // It mirrors Wails' build/pkg/packager.go compileResources: templates in
 // build/windows/{info.json,wails.exe.manifest} are resolved with the project
 // data from wails.json, then bundled with build/windows/icon.ico into
-// <name>-res.syso at the repository root. The name intentionally matches
-// Wails' ephemeral file: two distinct .syso files would create two .rsrc
-// sections and break the Windows linker ("too many .rsrc sections"). Wails
-// simply overwrites this file with identical content during `wails dev` /
-// `wails build`, and deletes it when finished (restore it with
-// `go run ./tools/resgen` or `git restore -- <name>-res.syso`).
+// internal/winres/dumd_windows_<arch>.syso.
 //
-// Regenerate and re-commit <name>-res.syso whenever wails.json info or
-// build/windows/{icon.ico,info.json,wails.exe.manifest} change. CI
-// (dist-check.yml) enforces freshness. Additionally, after any local
-// `wails dev` or `wails build` the file is deleted by the Wails CLI;
-// regenerate or `git restore` it before committing.
+// The output lives in its own package and filename, deliberately distinct
+// from Wails' ephemeral <name>-res.syso: the GOARCH-suffixed name keeps the
+// Go toolchain from linking it on non-Windows targets, and the package is
+// only pulled in by resources_windows.go, which excludes Wails' own build
+// tags (dev, desktop) so the two resource objects never reach the linker
+// together — two would fail with "too many .rsrc sections".
+//
+// Regenerate and re-commit the internal/winres/*.syso files whenever
+// wails.json info or build/windows/{icon.ico,info.json,wails.exe.manifest}
+// change. CI (dist-check.yml) enforces freshness, and the pre-commit hook
+// (lefthook.yml) regenerates and stages them automatically.
 package main
 
 import (
@@ -36,10 +38,10 @@ import (
 // projectInfo is a trimmed copy of Wails' internal/project Project for the
 // fields that templates may reference.
 type projectInfo struct {
-	Name           string   `json:"name"`
-	OutputFilename string   `json:"outputfilename"`
-	Info           appInfo  `json:"info"`
-	InfoDefaults   appInfo  `json:"-"`
+	Name           string  `json:"name"`
+	OutputFilename string  `json:"outputfilename"`
+	Info           appInfo `json:"info"`
+	InfoDefaults   appInfo `json:"-"`
 }
 
 type appInfo struct {
@@ -62,20 +64,31 @@ var archs = map[string]winres.Arch{
 	"386":   winres.ArchI386,
 }
 
-func main() {
-	archFlag := "amd64"
-	if len(os.Args) > 1 {
-		archFlag = os.Args[1]
-	}
-	arch, ok := archs[archFlag]
-	if !ok {
-		fmt.Fprintf(os.Stderr, "resgen: unsupported arch %q (want amd64|arm64|386)\n", archFlag)
-		os.Exit(2)
-	}
+// defaultArchs is the set generated when no arch argument is given: every
+// Windows architecture DuMD ships or supports via `go install`.
+var defaultArchs = []string{"amd64", "arm64"}
 
+func main() {
+	archFlags := defaultArchs
+	if len(os.Args) > 1 {
+		archFlags = os.Args[1:]
+	}
+	for _, archFlag := range archFlags {
+		arch, ok := archs[archFlag]
+		if !ok {
+			fmt.Fprintf(os.Stderr, "resgen: unsupported arch %q (want amd64|arm64|386)\n", archFlag)
+			os.Exit(2)
+		}
+		if err := generate(archFlag, arch); err != nil {
+			fatal(err)
+		}
+	}
+}
+
+func generate(archFlag string, arch winres.Arch) error {
 	project, err := loadProject("wails.json")
 	if err != nil {
-		fatal(err)
+		return err
 	}
 	project.setDefaults()
 
@@ -91,53 +104,59 @@ func main() {
 	icoPath := filepath.Join("build", "windows", "icon.ico")
 	iconFile, err := os.Open(icoPath)
 	if err != nil {
-		fatal(err)
+		return err
 	}
 	defer iconFile.Close()
 	ico, err := winres.LoadICO(iconFile)
 	if err != nil {
-		fatal(fmt.Errorf("couldn't load icon from icon.ico: %w", err))
+		return fmt.Errorf("couldn't load icon from icon.ico: %w", err)
 	}
 	if err := rs.SetIcon(winres.RT_ICON, ico); err != nil {
-		fatal(err)
+		return err
 	}
 
 	// Manifest
 	manifest, err := resolveTemplate(filepath.Join("build", "windows", "wails.exe.manifest"), data)
 	if err != nil {
-		fatal(err)
+		return err
 	}
 	xmlData, err := winres.AppManifestFromXML(manifest)
 	if err != nil {
-		fatal(err)
+		return err
 	}
 	rs.SetManifest(xmlData)
 
 	// Version info
 	versionInfo, err := resolveTemplate(filepath.Join("build", "windows", "info.json"), data)
 	if err != nil {
-		fatal(err)
+		return err
 	}
 	if len(versionInfo) != 0 {
 		var v version.Info
 		if err := v.UnmarshalJSON(versionInfo); err != nil {
-			fatal(err)
+			return err
 		}
 		rs.SetVersionInfo(v)
 	}
 
-	// Must exactly match Wails' ephemeral filename (see compileResources in
-	// build/pkg/packager.go) so only one .rsrc section reaches the linker.
-	target := strings.ReplaceAll(project.Name, " ", "_") + "-res.syso"
+	// Deliberately distinct from Wails' ephemeral <name>-res.syso — see the
+	// package doc comment above.
+	name := strings.ReplaceAll(strings.ToLower(project.Name), " ", "_")
+	targetDir := filepath.Join("internal", "winres")
+	if err := os.MkdirAll(targetDir, 0o755); err != nil {
+		return err
+	}
+	target := filepath.Join(targetDir, fmt.Sprintf("%s_windows_%s.syso", name, archFlag))
 	fout, err := os.Create(target)
 	if err != nil {
-		fatal(err)
+		return err
 	}
 	defer fout.Close()
 	if err := rs.WriteObject(fout, arch); err != nil {
-		fatal(err)
+		return err
 	}
-	fmt.Printf("resgen: wrote %s (%s)\n", target, archFlag)
+	fmt.Printf("resgen: wrote %s\n", target)
+	return nil
 }
 
 func fatal(err error) {
