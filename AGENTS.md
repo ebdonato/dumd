@@ -36,7 +36,12 @@
 
 ## Testing
 
-No tests exist yet. No test framework is configured.
+- `go test ./...` — `app_test.go` covers image-src rewriting and the local-file HTTP handler. No frontend tests; no test framework configured.
+
+## Git Hooks & Release
+
+- **Lefthook** (`lefthook.yml`) pre-commit regenerates `dumd-res.syso` via `go run ./tools/resgen` and stages it.
+- Release workflow (`.github/workflows/release.yml`) triggers on `v*` tags; Linux/macOS jobs `rm -f dumd-res.syso` before `wails build` (Windows-only resource object breaks/irrelevant elsewhere — local builds on non-Windows should do the same).
 
 ## Install (`go install`)
 
