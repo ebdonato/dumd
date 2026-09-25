@@ -1,0 +1,14 @@
+#!/bin/sh
+# Regenerates internal/winres/*.syso and stages it whenever a commit touches
+# the resgen inputs (wails.json info or build/windows/*), so a forgotten
+# `go run ./tools/resgen` can no longer slip a stale resource object into a
+# commit. See AGENTS.md ("Release") for background.
+#
+# Installed automatically via core.hooksPath — see scripts/install-git-hooks.js.
+set -e
+
+if git diff --cached --name-only --diff-filter=ACM | grep -qE '^(wails\.json|build/windows/(icon\.ico|info\.json|wails\.exe\.manifest))$'; then
+  echo "pre-commit: resgen inputs changed, regenerating internal/winres"
+  go run ./tools/resgen
+  git add internal/winres
+fi
