@@ -1,8 +1,0 @@
-# lefthook.yml — Git hooks managed by Lefthook
-# https://github.com/evilmartians/lefthook
-
-pre-commit:
-  commands:
-    resgen:
-      glob: "{wails.json,build/windows/icon.ico,build/windows/info.json,build/windows/wails.exe.manifest}"
-      run: go run ./tools/resgen && git add internal/winres

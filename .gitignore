@@ -21,6 +21,3 @@ frontend/package.json.md5
 *.dylib
 *.test
 *.out
-
-# Lefthook local overrides
-lefthook-local.yml

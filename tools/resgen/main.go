@@ -16,10 +16,9 @@
 // tags (dev, desktop) so the two resource objects never reach the linker
 // together — two would fail with "too many .rsrc sections".
 //
-// Regenerate and re-commit the internal/winres/*.syso files whenever
+// Regenerate and re-commit the internal/winres/*.syso files by hand whenever
 // wails.json info or build/windows/{icon.ico,info.json,wails.exe.manifest}
-// change. CI (dist-check.yml) enforces freshness, and the pre-commit hook
-// (lefthook.yml) regenerates and stages them automatically.
+// change; CI (dist-check.yml) enforces freshness if that step is forgotten.
 package main
 
 import (
