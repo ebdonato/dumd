@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DuMD — Minimalist Markdown Viewer</title>
+<meta name="description" content="DuMD is an ultra-minimalist, keyboard-driven desktop Markdown viewer. Single binary, no runtime deps, Light/Dark/Sepia themes, Vim-style navigation." />
+<link rel="icon" type="image/svg+xml" href="logo.svg" />
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-alt: #f6f8fa;
+    --text: #1b1f24;
+    --text-muted: #57606a;
+    --border: #d0d7de;
+    --code-bg: #0d1117;
+    --code-text: #e6edf3;
+    --accent: #d1600c;
+    --accent-2: #ffb300;
+    --accent-contrast: #1b1200;
+    --btn-text: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1117;
+      --bg-alt: #151b23;
+      --text: #e6edf3;
+      --text-muted: #9198a1;
+      --border: #30363d;
+      --code-bg: #010409;
+      --code-text: #e6edf3;
+      --accent: #ffb300;
+      --accent-2: #ff6f00;
+      --accent-contrast: #1b1200;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  code, pre, .mono {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  }
+  img { max-width: 100%; display: block; }
+
+  .wrap {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* Nav */
+  nav.top {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+  }
+  nav.top .wrap {
+    max-width: 900px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding-block: 12px;
+  }
+  nav.top .brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    color: var(--text);
+    text-decoration: none;
+    margin-right: auto;
+  }
+  nav.top .brand img { width: 22px; height: 22px; }
+  nav.top a.link {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 14px;
+  }
+  nav.top a.link:hover { color: var(--text); }
+  nav.top a.gh { display: flex; align-items: center; }
+  nav.top a.gh svg { width: 20px; height: 20px; fill: var(--text-muted); }
+  nav.top a.gh:hover svg { fill: var(--text); }
+  nav.top .navlinks { display: flex; gap: 20px; align-items: center; }
+
+  /* Hero */
+  header.hero {
+    text-align: center;
+    padding: 64px 24px 40px;
+  }
+  header.hero img.logo {
+    width: 84px;
+    height: 84px;
+    margin: 0 auto 20px;
+  }
+  header.hero h1 {
+    font-size: 40px;
+    margin: 0 0 12px;
+    letter-spacing: -0.02em;
+  }
+  header.hero p.tagline {
+    color: var(--text-muted);
+    font-size: 18px;
+    max-width: 520px;
+    margin: 0 auto 28px;
+  }
+  .cta {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    border: 1px solid var(--border);
+    color: var(--text);
+    transition: transform 0.1s ease, border-color 0.15s ease;
+  }
+  .btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .btn.primary {
+    background: linear-gradient(135deg, var(--accent-2), var(--accent));
+    color: var(--accent-contrast);
+    border-color: transparent;
+  }
+  .platforms {
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  /* Sections */
+  section { padding: 56px 0; border-top: 1px solid var(--border); }
+  section .wrap { max-width: 780px; }
+  h2 {
+    font-size: 24px;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+  }
+  section > .wrap > p.lead {
+    color: var(--text-muted);
+    margin: 0 0 28px;
+  }
+
+  /* Screenshots */
+  .theme-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .theme-tabs button {
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+  .theme-tabs button.active {
+    color: var(--btn-text);
+    border-color: transparent;
+    background: linear-gradient(135deg, var(--accent-2), var(--accent));
+    color: var(--accent-contrast);
+  }
+  .shot-frame {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 12px 32px -16px rgba(0,0,0,0.35);
+  }
+  .shot-frame img { width: 100%; }
+  .shot-caption {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-top: 12px;
+  }
+
+  /* Install / usage code blocks */
+  .code-block {
+    position: relative;
+    margin-bottom: 16px;
+  }
+  .code-block pre {
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 16px 44px 16px 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 0;
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+  .code-block .comment { color: #8b949e; }
+  .copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #e6edf3;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 11px;
+    cursor: pointer;
+  }
+  .copy-btn:hover { background: rgba(255,255,255,0.16); }
+
+  h3 { font-size: 16px; margin: 24px 0 10px; }
+  h3:first-of-type { margin-top: 0; }
+  .note {
+    font-size: 14px;
+    color: var(--text-muted);
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .note a { color: inherit; }
+
+  table.compat {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 16px 0;
+  }
+  table.compat th, table.compat td {
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  table.compat th { color: var(--text-muted); font-weight: 600; }
+
+  /* Features */
+  .features {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  .feature h4 {
+    margin: 0 0 4px;
+    font-size: 15px;
+  }
+  .feature p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+
+  /* Shortcuts */
+  .kbd-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 32px;
+  }
+  .kbd-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 0;
+    border-bottom: 1px dashed var(--border);
+  }
+  .kbd-row span.desc { color: var(--text-muted); font-size: 14px; }
+  kbd {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-bottom-width: 2px;
+    border-radius: 5px;
+    padding: 2px 6px;
+    white-space: nowrap;
+  }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 24px 48px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+  footer a { color: var(--text-muted); }
+  footer a:hover { color: var(--text); }
+
+  @media (max-width: 560px) {
+    .features { grid-template-columns: 1fr; }
+    .kbd-grid { grid-template-columns: 1fr; }
+    header.hero h1 { font-size: 32px; }
+    nav.top .navlinks { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="wrap">
+    <a class="brand" href="#top">
+      <img src="logo.svg" alt="" />
+      DuMD
+    </a>
+    <div class="navlinks">
+      <a class="link" href="#screenshots">Screenshots</a>
+      <a class="link" href="#install">Install</a>
+      <a class="link" href="#usage">Usage</a>
+      <a class="link" href="#shortcuts">Shortcuts</a>
+    </div>
+    <a class="gh" href="https://github.com/ebdonato/dumd" aria-label="GitHub repository" title="GitHub repository">
+      <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+    </a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <img class="logo" src="logo.svg" alt="DuMD logo" />
+  <h1>DuMD</h1>
+  <p class="tagline">An ultra-minimalist, keyboard-driven desktop Markdown viewer.</p>
+  <div class="cta">
+    <a class="btn primary" href="https://github.com/ebdonato/dumd/releases/latest">↓ Latest Release</a>
+    <a class="btn" href="https://github.com/ebdonato/dumd">View on GitHub</a>
+  </div>
+  <p class="platforms">Windows · macOS · Linux — single binary, no runtime dependencies</p>
+</header>
+
+<section id="screenshots">
+  <div class="wrap">
+    <h2>Three reading themes</h2>
+    <p class="lead">Light, Dark, and Sepia — switch anytime with a single keypress.</p>
+    <div class="theme-tabs">
+      <button data-theme="light" class="active">Light</button>
+      <button data-theme="dark">Dark</button>
+      <button data-theme="sepia">Sepia</button>
+    </div>
+    <div class="shot-frame">
+      <img id="shot" src="screenshots/light.png" alt="DuMD showing the Light theme" />
+    </div>
+    <p class="shot-caption" id="shot-caption">Light — Clean and crisp for daytime reading</p>
+  </div>
+</section>
+
+<section id="install">
+  <div class="wrap">
+    <h2>Install</h2>
+    <p class="lead">Requires Go ≥ 1.25. On Linux and macOS a C compiler is needed too (Wails links WebView via cgo); Windows is pure Go.</p>
+
+    <h3>Windows / macOS</h3>
+    <div class="code-block">
+      <pre><code>go install -tags production github.com/ebdonato/dumd@latest</code></pre>
+      <button class="copy-btn" data-copy="go install -tags production github.com/ebdonato/dumd@latest">Copy</button>
+    </div>
+
+    <h3>Linux</h3>
+    <p style="color:var(--text-muted); font-size:14px; margin-top:-6px;">Build deps: <code>libgtk-3-dev libwebkit2gtk-4.1-dev</code></p>
+    <div class="code-block">
+      <pre><code>go install -tags "production webkit2_41" github.com/ebdonato/dumd@latest</code></pre>
+      <button class="copy-btn" data-copy='go install -tags "production webkit2_41" github.com/ebdonato/dumd@latest'>Copy</button>
+    </div>
+
+    <div class="note">
+      To install a specific version, replace <code>@latest</code> with a tag, e.g. <code>@v1.3.2</code>.
+      Prefer a prebuilt binary? Grab one from the <a href="https://github.com/ebdonato/dumd/releases/latest">latest release</a> for Windows, macOS (ARM/Intel), or Linux.
+    </div>
+  </div>
+</section>
+
+<section id="usage">
+  <div class="wrap">
+    <h2>Usage</h2>
+    <p class="lead">Open any Markdown file straight from your terminal.</p>
+    <div class="code-block">
+      <pre><code>dumd README.md</code></pre>
+      <button class="copy-btn" data-copy="dumd README.md">Copy</button>
+    </div>
+    <p style="color:var(--text-muted); font-size:14px;">Launch it without a file argument to see a welcome screen with usage instructions. Relative <code>.md</code> links open in a new DuMD window; external links open in your default browser.</p>
+  </div>
+</section>
+
+<section id="features">
+  <div class="wrap">
+    <h2>Why DuMD</h2>
+    <p class="lead">Built for people who just want to read a file — nothing more.</p>
+    <div class="features">
+      <div class="feature">
+        <h4>🪶 Featherweight</h4>
+        <p>Binary under 18 MB, idle RAM under 60 MB.</p>
+      </div>
+      <div class="feature">
+        <h4>⌨️ Keyboard-first</h4>
+        <p>Vim-style scrolling, spacebar page navigation, single-key theme switching.</p>
+      </div>
+      <div class="feature">
+        <h4>🎨 Three themes</h4>
+        <p>Light, Dark, and Sepia, persisted across sessions.</p>
+      </div>
+      <div class="feature">
+        <h4>📦 Zero dependencies</h4>
+        <p>No Node.js, no Python, no installers — just one executable.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="shortcuts">
+  <div class="wrap">
+    <h2>Keyboard shortcuts</h2>
+    <p class="lead">Everything reachable without touching the mouse.</p>
+    <div class="kbd-grid">
+      <div class="kbd-row"><span class="desc">Scroll down 80% of viewport</span><kbd>Space</kbd></div>
+      <div class="kbd-row"><span class="desc">Scroll up 80% of viewport</span><kbd>Shift</kbd>+<kbd>Space</kbd></div>
+      <div class="kbd-row"><span class="desc">Scroll down / up (line)</span><span><kbd>j</kbd> / <kbd>k</kbd></span></div>
+      <div class="kbd-row"><span class="desc">Scroll left / right</span><span><kbd>h</kbd> / <kbd>l</kbd></span></div>
+      <div class="kbd-row"><span class="desc">Jump to top / bottom</span><span><kbd>g</kbd> / <kbd>G</kbd></span></div>
+      <div class="kbd-row"><span class="desc">Cycle theme</span><kbd>t</kbd></div>
+      <div class="kbd-row"><span class="desc">Zoom in / out</span><span><kbd>Ctrl</kbd>+<kbd>=</kbd> / <kbd>Ctrl</kbd>+<kbd>-</kbd></span></div>
+      <div class="kbd-row"><span class="desc">Quit</span><span><kbd>q</kbd> / <kbd>Esc</kbd></span></div>
+    </div>
+    <p style="color:var(--text-muted); font-size:13px; margin-top:16px;">On macOS, use <kbd>Cmd</kbd> instead of <kbd>Ctrl</kbd> for zoom.</p>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Eduardo DONATO — DuMD is built with <a href="https://wails.io">Wails</a> and <a href="https://github.com/yuin/goldmark">Goldmark</a>.</p>
+  <p><a href="https://github.com/ebdonato/dumd">github.com/ebdonato/dumd</a></p>
+</footer>
+
+<script>
+  var shots = {
+    light: { file: "screenshots/light.png", caption: "Light — Clean and crisp for daytime reading" },
+    dark: { file: "screenshots/dark.png", caption: "Dark — GitHub Dark inspired, easy on the eyes at night" },
+    sepia: { file: "screenshots/sepia.png", caption: "Sepia — Warm reading tone with the settings panel open" }
+  };
+  var tabs = document.querySelectorAll(".theme-tabs button");
+  var img = document.getElementById("shot");
+  var caption = document.getElementById("shot-caption");
+  tabs.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      tabs.forEach(function (b) { b.classList.remove("active"); });
+      btn.classList.add("active");
+      var theme = shots[btn.getAttribute("data-theme")];
+      img.src = theme.file;
+      img.alt = "DuMD showing the " + btn.getAttribute("data-theme") + " theme";
+      caption.textContent = theme.caption;
+    });
+  });
+
+  document.querySelectorAll(".copy-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var text = btn.getAttribute("data-copy");
+      navigator.clipboard && navigator.clipboard.writeText(text).then(function () {
+        var original = btn.textContent;
+        btn.textContent = "Copied!";
+        setTimeout(function () { btn.textContent = original; }, 1500);
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
