@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>DuMD — Minimalist Markdown Viewer</title>
-<meta name="description" content="DuMD is an ultra-minimalist, keyboard-driven desktop Markdown viewer. Single binary, no runtime deps, Light/Dark/Sepia themes, Vim-style navigation." />
-<link rel="icon" type="image/svg+xml" href="logo.svg" />
+<title>DuMD — Visualizador Minimalista de Markdown</title>
+<meta name="description" content="DuMD é um visualizador de Markdown para desktop, ultraminimalista e controlado pelo teclado. Binário único, sem dependências de runtime, temas Claro/Escuro/Sépia e navegação estilo Vim." />
+<link rel="icon" type="image/svg+xml" href="../logo.svg" />
 <link rel="alternate" hreflang="en" href="https://ebdonato.github.io/dumd/" />
 <link rel="alternate" hreflang="pt-BR" href="https://ebdonato.github.io/dumd/pt/" />
 <style>
@@ -327,110 +327,110 @@
 <nav class="top">
   <div class="wrap">
     <a class="brand" href="#top">
-      <img src="logo.svg" alt="" />
+      <img src="../logo.svg" alt="" />
       DuMD
     </a>
     <div class="navlinks">
-      <a class="link" href="#screenshots">Screenshots</a>
-      <a class="link" href="#install">Install</a>
-      <a class="link" href="#usage">Usage</a>
-      <a class="link" href="#shortcuts">Shortcuts</a>
+      <a class="link" href="#screenshots">Capturas de Tela</a>
+      <a class="link" href="#install">Instalação</a>
+      <a class="link" href="#usage">Uso</a>
+      <a class="link" href="#shortcuts">Atalhos</a>
     </div>
     <div class="lang-switch">
-      <a href="index.html" class="active">EN</a>
+      <a href="../index.html">EN</a>
       <span class="sep">/</span>
-      <a href="pt/index.html">PT</a>
+      <a href="index.html" class="active">PT</a>
     </div>
-    <a class="gh" href="https://github.com/ebdonato/dumd" aria-label="GitHub repository" title="GitHub repository">
+    <a class="gh" href="https://github.com/ebdonato/dumd" aria-label="Repositório no GitHub" title="Repositório no GitHub">
       <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
     </a>
   </div>
 </nav>
 
 <header class="hero" id="top">
-  <img class="logo" src="logo.svg" alt="DuMD logo" />
+  <img class="logo" src="../logo.svg" alt="Logo do DuMD" />
   <h1>DuMD</h1>
-  <p class="tagline">An ultra-minimalist, keyboard-driven desktop Markdown viewer.</p>
+  <p class="tagline">Um visualizador de Markdown para desktop, ultraminimalista e controlado pelo teclado.</p>
   <div class="cta">
-    <a class="btn primary" href="https://github.com/ebdonato/dumd/releases/latest">↓ Latest Release</a>
-    <a class="btn" href="https://github.com/ebdonato/dumd">View on GitHub</a>
+    <a class="btn primary" href="https://github.com/ebdonato/dumd/releases/latest">↓ Última Versão</a>
+    <a class="btn" href="https://github.com/ebdonato/dumd">Ver no GitHub</a>
   </div>
-  <p class="platforms">Windows · macOS · Linux — single binary, no runtime dependencies</p>
+  <p class="platforms">Windows · macOS · Linux — binário único, sem dependências de runtime</p>
 </header>
 
 <section id="screenshots">
   <div class="wrap">
-    <h2>Three reading themes</h2>
-    <p class="lead">Light, Dark, and Sepia — switch anytime with a single keypress.</p>
+    <h2>Três temas de leitura</h2>
+    <p class="lead">Claro, Escuro e Sépia — troque a qualquer momento com uma única tecla.</p>
     <div class="theme-tabs">
-      <button data-theme="light" class="active">Light</button>
-      <button data-theme="dark">Dark</button>
-      <button data-theme="sepia">Sepia</button>
+      <button data-theme="light" class="active">Claro</button>
+      <button data-theme="dark">Escuro</button>
+      <button data-theme="sepia">Sépia</button>
     </div>
     <div class="shot-frame">
-      <img id="shot" src="screenshots/light.png" alt="DuMD showing the Light theme" />
+      <img id="shot" src="../screenshots/light.png" alt="DuMD exibindo o tema Claro" />
     </div>
-    <p class="shot-caption" id="shot-caption">Light — Clean and crisp for daytime reading</p>
+    <p class="shot-caption" id="shot-caption">Claro — Limpo e nítido para leitura durante o dia</p>
   </div>
 </section>
 
 <section id="install">
   <div class="wrap">
-    <h2>Install</h2>
-    <p class="lead">Requires Go ≥ 1.25. On Linux and macOS a C compiler is needed too (Wails links WebView via cgo); Windows is pure Go.</p>
+    <h2>Instalação</h2>
+    <p class="lead">Requer Go ≥ 1.25. No Linux e macOS também é necessário um compilador C (o Wails usa cgo para o WebView); no Windows é Go puro.</p>
 
     <h3>Windows / macOS</h3>
     <div class="code-block">
       <pre><code>go install -tags production github.com/ebdonato/dumd@latest</code></pre>
-      <button class="copy-btn" data-copy="go install -tags production github.com/ebdonato/dumd@latest">Copy</button>
+      <button class="copy-btn" data-copy="go install -tags production github.com/ebdonato/dumd@latest">Copiar</button>
     </div>
 
     <h3>Linux</h3>
-    <p style="color:var(--text-muted); font-size:14px; margin-top:-6px;">Build deps: <code>libgtk-3-dev libwebkit2gtk-4.1-dev</code></p>
+    <p style="color:var(--text-muted); font-size:14px; margin-top:-6px;">Dependências de build: <code>libgtk-3-dev libwebkit2gtk-4.1-dev</code></p>
     <div class="code-block">
       <pre><code>go install -tags "production webkit2_41" github.com/ebdonato/dumd@latest</code></pre>
-      <button class="copy-btn" data-copy='go install -tags "production webkit2_41" github.com/ebdonato/dumd@latest'>Copy</button>
+      <button class="copy-btn" data-copy='go install -tags "production webkit2_41" github.com/ebdonato/dumd@latest'>Copiar</button>
     </div>
 
     <div class="note">
-      To install a specific version, replace <code>@latest</code> with a tag, e.g. <code>@v1.3.2</code>.
-      Prefer a prebuilt binary? Grab one from the <a href="https://github.com/ebdonato/dumd/releases/latest">latest release</a> for Windows, macOS (ARM/Intel), or Linux.
+      Para instalar uma versão específica, substitua <code>@latest</code> por uma tag, por exemplo <code>@v1.3.2</code>.
+      Prefere um binário pronto? Baixe um na <a href="https://github.com/ebdonato/dumd/releases/latest">última versão</a> para Windows, macOS (ARM/Intel) ou Linux.
     </div>
   </div>
 </section>
 
 <section id="usage">
   <div class="wrap">
-    <h2>Usage</h2>
-    <p class="lead">Open any Markdown file straight from your terminal.</p>
+    <h2>Uso</h2>
+    <p class="lead">Abra qualquer arquivo Markdown diretamente do terminal.</p>
     <div class="code-block">
       <pre><code>dumd README.md</code></pre>
-      <button class="copy-btn" data-copy="dumd README.md">Copy</button>
+      <button class="copy-btn" data-copy="dumd README.md">Copiar</button>
     </div>
-    <p style="color:var(--text-muted); font-size:14px;">Launch it without a file argument to see a welcome screen with usage instructions. Relative <code>.md</code> links open in a new DuMD window; external links open in your default browser.</p>
+    <p style="color:var(--text-muted); font-size:14px;">Inicie sem argumento de arquivo para ver uma tela de boas-vindas com instruções de uso. Links relativos para <code>.md</code> abrem em uma nova janela do DuMD; links externos abrem no navegador padrão.</p>
   </div>
 </section>
 
 <section id="features">
   <div class="wrap">
-    <h2>Why DuMD</h2>
-    <p class="lead">Built for people who just want to read a file — nothing more.</p>
+    <h2>Por que o DuMD</h2>
+    <p class="lead">Feito para quem só quer ler um arquivo — nada mais.</p>
     <div class="features">
       <div class="feature">
-        <h4>🪶 Featherweight</h4>
-        <p>Binary under 18 MB, idle RAM under 60 MB.</p>
+        <h4>🪶 Leve</h4>
+        <p>Binário com menos de 18 MB, RAM ociosa abaixo de 60 MB.</p>
       </div>
       <div class="feature">
-        <h4>⌨️ Keyboard-first</h4>
-        <p>Vim-style scrolling, spacebar page navigation, single-key theme switching.</p>
+        <h4>⌨️ Foco no teclado</h4>
+        <p>Rolagem estilo Vim, navegação por página com a barra de espaço, troca de tema com uma tecla.</p>
       </div>
       <div class="feature">
-        <h4>🎨 Three themes</h4>
-        <p>Light, Dark, and Sepia, persisted across sessions.</p>
+        <h4>🎨 Três temas</h4>
+        <p>Claro, Escuro e Sépia, salvos entre sessões.</p>
       </div>
       <div class="feature">
-        <h4>📦 Zero dependencies</h4>
-        <p>No Node.js, no Python, no installers — just one executable.</p>
+        <h4>📦 Zero dependências</h4>
+        <p>Sem Node.js, sem Python, sem instaladores — apenas um executável.</p>
       </div>
     </div>
   </div>
@@ -438,33 +438,34 @@
 
 <section id="shortcuts">
   <div class="wrap">
-    <h2>Keyboard shortcuts</h2>
-    <p class="lead">Everything reachable without touching the mouse.</p>
+    <h2>Atalhos de teclado</h2>
+    <p class="lead">Tudo acessível sem tocar no mouse.</p>
     <div class="kbd-grid">
-      <div class="kbd-row"><span class="desc">Scroll down 80% of viewport</span><kbd>Space</kbd></div>
-      <div class="kbd-row"><span class="desc">Scroll up 80% of viewport</span><kbd>Shift</kbd>+<kbd>Space</kbd></div>
-      <div class="kbd-row"><span class="desc">Scroll down / up (line)</span><span><kbd>j</kbd> / <kbd>k</kbd></span></div>
-      <div class="kbd-row"><span class="desc">Scroll left / right</span><span><kbd>h</kbd> / <kbd>l</kbd></span></div>
-      <div class="kbd-row"><span class="desc">Jump to top / bottom</span><span><kbd>g</kbd> / <kbd>G</kbd></span></div>
-      <div class="kbd-row"><span class="desc">Cycle theme</span><kbd>t</kbd></div>
-      <div class="kbd-row"><span class="desc">Zoom in / out</span><span><kbd>Ctrl</kbd>+<kbd>=</kbd> / <kbd>Ctrl</kbd>+<kbd>-</kbd></span></div>
-      <div class="kbd-row"><span class="desc">Quit</span><span><kbd>q</kbd> / <kbd>Esc</kbd></span></div>
+      <div class="kbd-row"><span class="desc">Rolar 80% da tela para baixo</span><kbd>Space</kbd></div>
+      <div class="kbd-row"><span class="desc">Rolar 80% da tela para cima</span><kbd>Shift</kbd>+<kbd>Space</kbd></div>
+      <div class="kbd-row"><span class="desc">Rolar para baixo / cima (linha)</span><span><kbd>j</kbd> / <kbd>k</kbd></span></div>
+      <div class="kbd-row"><span class="desc">Rolar para esquerda / direita</span><span><kbd>h</kbd> / <kbd>l</kbd></span></div>
+      <div class="kbd-row"><span class="desc">Ir para o topo / fim</span><span><kbd>g</kbd> / <kbd>G</kbd></span></div>
+      <div class="kbd-row"><span class="desc">Alternar tema</span><kbd>t</kbd></div>
+      <div class="kbd-row"><span class="desc">Zoom + / -</span><span><kbd>Ctrl</kbd>+<kbd>=</kbd> / <kbd>Ctrl</kbd>+<kbd>-</kbd></span></div>
+      <div class="kbd-row"><span class="desc">Sair</span><span><kbd>q</kbd> / <kbd>Esc</kbd></span></div>
     </div>
-    <p style="color:var(--text-muted); font-size:13px; margin-top:16px;">On macOS, use <kbd>Cmd</kbd> instead of <kbd>Ctrl</kbd> for zoom.</p>
+    <p style="color:var(--text-muted); font-size:13px; margin-top:16px;">No macOS, use <kbd>Cmd</kbd> em vez de <kbd>Ctrl</kbd> para zoom.</p>
   </div>
 </section>
 
 <footer>
-  <p>© 2026 Eduardo DONATO — DuMD is built with <a href="https://wails.io">Wails</a> and <a href="https://github.com/yuin/goldmark">Goldmark</a>.</p>
+  <p>© 2026 Eduardo DONATO — DuMD é construído com <a href="https://wails.io">Wails</a> e <a href="https://github.com/yuin/goldmark">Goldmark</a>.</p>
   <p><a href="https://github.com/ebdonato/dumd">github.com/ebdonato/dumd</a></p>
 </footer>
 
 <script>
   var shots = {
-    light: { file: "screenshots/light.png", caption: "Light — Clean and crisp for daytime reading" },
-    dark: { file: "screenshots/dark.png", caption: "Dark — GitHub Dark inspired, easy on the eyes at night" },
-    sepia: { file: "screenshots/sepia.png", caption: "Sepia — Warm reading tone with the settings panel open" }
+    light: { file: "../screenshots/light.png", caption: "Claro — Limpo e nítido para leitura durante o dia" },
+    dark: { file: "../screenshots/dark.png", caption: "Escuro — Inspirado no GitHub Dark, agradável aos olhos à noite" },
+    sepia: { file: "../screenshots/sepia.png", caption: "Sépia — Tom quente de leitura com o painel de configurações aberto" }
   };
+  var labels = { light: "Claro", dark: "Escuro", sepia: "Sépia" };
   var tabs = document.querySelectorAll(".theme-tabs button");
   var img = document.getElementById("shot");
   var caption = document.getElementById("shot-caption");
@@ -472,9 +473,10 @@
     btn.addEventListener("click", function () {
       tabs.forEach(function (b) { b.classList.remove("active"); });
       btn.classList.add("active");
-      var theme = shots[btn.getAttribute("data-theme")];
+      var key = btn.getAttribute("data-theme");
+      var theme = shots[key];
       img.src = theme.file;
-      img.alt = "DuMD showing the " + btn.getAttribute("data-theme") + " theme";
+      img.alt = "DuMD exibindo o tema " + labels[key];
       caption.textContent = theme.caption;
     });
   });
@@ -484,7 +486,7 @@
       var text = btn.getAttribute("data-copy");
       navigator.clipboard && navigator.clipboard.writeText(text).then(function () {
         var original = btn.textContent;
-        btn.textContent = "Copied!";
+        btn.textContent = "Copiado!";
         setTimeout(function () { btn.textContent = original; }, 1500);
       });
     });
